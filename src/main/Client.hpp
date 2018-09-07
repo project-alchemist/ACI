@@ -6,7 +6,7 @@
 
 namespace alchemist {
 
-using boost::asio::ip::tcp;
+using asio::ip::tcp;
 
 
 class Client : public std::enable_shared_from_this<Client>
@@ -55,7 +55,7 @@ protected:
 	void connect(string address, uint16_t port);
 	void connect(const tcp::resolver::results_type & endpoints);
 
-	static void connect_handler(const boost::system::error_code & ec, const tcp::endpoint & endpoint);
+	static void connect_handler(const error_code & ec, const tcp::endpoint & endpoint);
 
 	void set_connected();
 

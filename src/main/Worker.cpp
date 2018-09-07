@@ -16,7 +16,7 @@ Worker::Worker(MPI_Comm & _world, MPI_Comm & _peers, io_context & _io_context, c
 	char buffer[12];
 	sprintf(buffer, "worker-%03d", ID);
 
-	log = start_log(string(buffer));
+	log = start_log(string(buffer), "[%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %v");
 
 	wait_for_command();
 }
@@ -183,37 +183,37 @@ void Worker::handle_command(aci_command c)
 //			connect_to_alchemist();
 			break;
 		case HANDSHAKES:
-			boost::asio::post(ioc, [this]() { send_handshakes(); });
+			asio::post(ioc, [this]() { send_handshakes(); });
 			ioc.run();
 			ioc.restart();
 			break;
 		case SEND_TEST_STRINGS:
-			boost::asio::post(ioc, [this]() { send_test_strings(); });
+			asio::post(ioc, [this]() { send_test_strings(); });
 			ioc.run();
 			ioc.restart();
 			break;
 		case REQUEST_TEST_STRINGS:
-			boost::asio::post(ioc, [this]() { request_test_strings(); });
+			asio::post(ioc, [this]() { request_test_strings(); });
 			ioc.run();
 			ioc.restart();
 			break;
 		case ALCHEMIST_MATRIX_LAYOUT:
-			boost::asio::post(ioc, [this]() { send_test_array(); });
+			asio::post(ioc, [this]() { send_test_array(); });
 			ioc.run();
 			ioc.restart();
 			break;
 		case NEW_RANDOM_MATRIX:
-			boost::asio::post(ioc, [this]() { new_random_matrix(); });
+			asio::post(ioc, [this]() { new_random_matrix(); });
 			ioc.run();
 			ioc.restart();
 			break;
 		case SET_MATRIX_ID:
-			boost::asio::post(ioc, [this]() { set_matrix_ID(); });
+			asio::post(ioc, [this]() { set_matrix_ID(); });
 			ioc.run();
 			ioc.restart();
 			break;
 		case SEND_MATRIX_DATA:
-			boost::asio::post(ioc, [this]() { send_matrix_data(); });
+			asio::post(ioc, [this]() { send_matrix_data(); });
 			ioc.run();
 			ioc.restart();
 			break;
@@ -381,9 +381,6 @@ void Worker::send_test_array()
 void Worker::go()
 {
 	connect_to_alchemist();
-//	some_threads.push_back(boost::thread(& Worker::connect_to_alchemist, this));
-//
-//	for (auto & t: some_threads) t.join();
 }
 
 void Worker::session_idle(Session_ID session_ID)

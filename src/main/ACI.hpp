@@ -16,9 +16,13 @@
 #include <memory>
 #include <set>
 #include <utility>
+#ifdef ASIO_STANDALONE
+#include <asio.hpp>
+#else
 #include <boost/version.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#endif
 #include <El.hpp>
 #include "mpi.h"
 #include "Message.hpp"
@@ -37,16 +41,24 @@
 #endif
 
 
-#if BOOST_VERSION < 106600
-typedef boost::asio::io_service io_context;
+#ifdef ASIO_STANDALONE
+typedef asio::io_context io_context;
+typedef asio::error_code error_code;
 #else
-typedef boost::asio::io_context io_context;
+typedef boost::asio asio;
+typedef boost::system::error_code error_code;
+#if BOOST_VERSION < 106600
+typedef asio::io_service io_context;
+#else
+typedef asio::io_context io_context;
+#endif
 #endif
 
 namespace alchemist {
 
 using std::string;
 using std::vector;
+using asio::ip::tcp;
 
 typedef El::Matrix<double> Matrix;
 typedef El::AbstractDistMatrix<double> DistMatrix;
@@ -58,12 +70,14 @@ inline const std::string get_ACI_version()
 	return ss.str();
 }
 
+#ifndef ASIO_STANDALONE
 inline const std::string get_Boost_version()
 {
 	std::stringstream ss;
 	ss << BOOST_VERSION / 100000 << "." << BOOST_VERSION / 100 % 1000 << "." << BOOST_VERSION % 100;
 	return ss.str();
 }
+#endif
 
 typedef uint16_t Worker_ID;
 typedef uint16_t Matrix_ID;

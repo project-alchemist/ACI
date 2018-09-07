@@ -61,8 +61,6 @@ private:
 	Worker_ID current_alchemist_worker_ID;
 	void handle_command(aci_command c);
 
-	std::vector<boost::thread> some_threads;
-
 	Session_ID next_session_ID;
 
 	WorkerSession_ptr ses;

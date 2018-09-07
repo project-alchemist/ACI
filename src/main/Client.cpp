@@ -9,9 +9,9 @@ Client::Client(io_context & _io_context) :
 //	socket = socket(io_context);
 //	resolver = resolver(io_context);
 
-	hostname = boost::asio::ip::host_name();
+	hostname = asio::ip::host_name();
 
-	address = boost::asio::ip::address().to_string();
+	address = asio::ip::address().to_string();
 //	port = socket.local_endpoint().port();
 
 
@@ -50,15 +50,15 @@ Client::Client(io_context & _io_context) :
 Client::Client(io_context & _io_context, const tcp::endpoint & endpoint) :
 		ioc(_io_context), socket(_io_context), resolver(_io_context), connected(false)
 {
-	socket.open(boost::asio::ip::tcp::v4());
-	boost::system::error_code ec;
+	socket.open(asio::ip::tcp::v4());
+	error_code ec;
 	socket.bind(endpoint, ec);
 
 //	auto bb = socket.local_endpoint();
 
-	hostname = boost::asio::ip::host_name();
+	hostname = asio::ip::host_name();
 
-	address = boost::asio::ip::address().to_string();
+	address = asio::ip::address().to_string();
 }
 
 //Client::Client(boost::asio::io_context & _io_context) : io_context(_io_context),
@@ -104,7 +104,7 @@ Client::Client(io_context & _io_context, const tcp::endpoint & endpoint) :
 //	connect(endpoints);
 //}
 
-void Client::connect_handler(const boost::system::error_code & ec, const boost::asio::ip::tcp::endpoint &)
+void Client::connect_handler(const error_code & ec, const asio::ip::tcp::endpoint &)
 {
 	std::cout << "Connect " << ec << std::endl;
 }
@@ -163,14 +163,14 @@ void Client::start()
 
 void Client::open_connection()
 {
-	boost::asio::post(ioc, [this]() { connect(); });
+	asio::post(ioc, [this]() { connect(); });
 	ioc.run();
 	ioc.restart();
 }
 
 void Client::open_connection(string address, uint16_t port)
 {
-	boost::asio::post(ioc, [this]() { connect1(); });
+	asio::post(ioc, [this]() { connect1(); });
 	ioc.run();
 	ioc.restart();
 }
@@ -199,7 +199,7 @@ void Client::connect(string address, uint16_t port)
 	log->info("Connecting to {}:{}", address, p);
 
 	tcp::resolver::query q(address.c_str(), p.c_str());
-	resolver.async_resolve(q, [this](const boost::system::error_code & ec, tcp::resolver::results_type endpoints)
+	resolver.async_resolve(q, [this](const error_code & ec, tcp::resolver::results_type endpoints)
 		{
 			if (!ec) connect(endpoints);
 			else log->info("ERROR: Unknown error while connecting to Alchemist (error code {})", ec.value());
@@ -208,8 +208,8 @@ void Client::connect(string address, uint16_t port)
 
 void Client::connect(const tcp::resolver::results_type & endpoints)
 {
-	boost::asio::async_connect(socket, endpoints,
-						[this](const boost::system::error_code & ec, const boost::asio::ip::tcp::endpoint &) {
+	asio::async_connect(socket, endpoints,
+						[this](const error_code & ec, const asio::ip::tcp::endpoint &) {
 							if (!ec) {
 								new_session();
 								connected = true;
@@ -233,12 +233,12 @@ void Client::connect(const tcp::resolver::results_type & endpoints)
 void Client::disconnect()
 {
 	list_connections();
-	std::cout << "Disconnect the following (space-separated list)" << std::endl;
+//	std::cout << "Disconnect the following (space-separated list)" << std::endl;
 }
 
 void Client::list_connections()
 {
-	std::cout << "Listing connections" << std::endl;
+//	std::cout << "Listing connections" << std::endl;
 }
 
 void Client::shut_down()
@@ -334,35 +334,6 @@ void Client::display_message()
 //							}
 //						});
 //}
-
-
-void Client::print_IP()
-{
-	// Outdated
-	int sockfd;
-	struct addrinfo hints, *servinfo, *p;
-	int rv;
-
-	memset(&hints, 0, sizeof hints);
-	hints.ai_family = AF_UNSPEC; // use AF_INET6 to force IPv6
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE; // use my IP address
-
-	if ((rv = getaddrinfo(NULL, "24960", &hints, &servinfo)) != 0) {
-	    fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-	    exit(1);
-	}
-
-	// loop through all the results and bind to the first we can
-	for(p = servinfo; p != NULL; p = p->ai_next) {
-		char hostname[NI_MAXHOST];
-		getnameinfo(p->ai_addr, p->ai_addrlen, hostname, NI_MAXHOST, NULL, 0, 0);
-		std::string ip(hostname);
-		std::cout << "IP: " << hostname << std::endl;
-	}
-
-	freeaddrinfo(servinfo); // all done with this structure
-}
 
 // ===============================================================================================
 // ===============================================================================================

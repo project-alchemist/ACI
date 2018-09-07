@@ -13,8 +13,7 @@ Driver::Driver(MPI_Comm & _world, MPI_Comm & _peers, io_context & _io_context, c
 		Client(_io_context, endpoint), world(_world), peers(_peers), next_matrix_ID(1), workers_assigned(false),
 		workers_connected(false), layout_ready(false)
 {
-	log = start_log("driver");
-	log->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%n] [%l]     %v");
+	log = start_log("driver", "[%Y-%m-%d %H:%M:%S.%e] [%n] [%l]     %v");
 
 	int world_size;
 	MPI_Comm_size(world, &world_size);
@@ -67,11 +66,17 @@ void Driver::print_welcome_message()
 	message += SPACE;
 	message += "----------------------------------------------\n";
 	message += SPACE;
+	#ifndef ASIO_STANDALONE
 	message += "Using Boost.Asio {}\n";
 	message += SPACE;
+	#endif
 	message += "Running on {} {}";
 
+	#ifndef ASIO_STANDALONE
 	log->info(message.c_str(), get_ACI_version(), get_Boost_version(), hostname, address, port);
+	#else
+	log->info(message.c_str(), get_ACI_version(), hostname, address, port);
+	#endif
 }
 
 void Driver::print_ready_message()

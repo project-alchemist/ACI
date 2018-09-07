@@ -9,7 +9,7 @@ then
 	export ACI_PATH=$HOME/Projects/ACI
 	
 	export ELEMENTAL_PATH=$HOME/Software/Elemental
-	export SPDLOG_PATH=$HOME/Software/SPDLog
+
 elif [ "$SYSTEM" == "Cori" ]
 then
 	export ACI_PATH=$SCRATCH/Projects/ACI

@@ -10,7 +10,7 @@
 
 namespace alchemist {
 
-using boost::asio::ip::tcp;
+using asio::ip::tcp;
 using std::string;
 
 typedef uint16_t Session_ID;

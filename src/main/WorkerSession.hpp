@@ -8,9 +8,6 @@
 
 namespace alchemist {
 
-using boost::asio::ip::tcp;
-using std::string;
-
 typedef std::deque<Message> Message_queue;
 
 class Worker;
