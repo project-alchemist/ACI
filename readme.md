@@ -1,3 +1,7 @@
+# ACICpp: C++ Interface for Alchemist
+
+[Note: This interface is currently outdated and will be updated June 2019]
+
 This is a C++ testing module for Alchemist (github.com/project-alchemist/Alchemist), provisionally called Alchemist-Client Interface (ACI).
 
 # Dependencies
